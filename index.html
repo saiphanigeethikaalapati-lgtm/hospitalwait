@@ -1,0 +1,2001 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HospitalWait - Smart Healthcare Management</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+        }
+
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --primary-light: #8b5cf6;
+            --secondary: #10b981;
+            --accent: #f59e0b;
+            --danger: #ef4444;
+            --success: #10b981;
+            --gray-50: #f8fafc;
+            --gray-100: #f1f5f9;
+            --gray-200: #e2e8f0;
+            --gray-300: #cbd5e1;
+            --gray-600: #475569;
+            --gray-700: #334155;
+            --gray-800: #1e293b;
+            --gray-900: #0f172a;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            --shadow-xl: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            --radius: 16px;
+            --radius-lg: 20px;
+            --transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            --glass: rgba(255, 255, 255, 0.1);
+            --glass-border: rgba(255, 255, 255, 0.2);
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: var(--gray-800);
+            line-height: 1.6;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Animated Background */
+        .animated-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .floating-shapes {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+
+        .shape {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .shape:nth-child(1) {
+            width: 80px;
+            height: 80px;
+            top: 20%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+
+        .shape:nth-child(2) {
+            width: 120px;
+            height: 120px;
+            top: 60%;
+            left: 80%;
+            animation-delay: 1s;
+        }
+
+        .shape:nth-child(3) {
+            width: 60px;
+            height: 60px;
+            top: 80%;
+            left: 20%;
+            animation-delay: 2s;
+        }
+
+        .shape:nth-child(4) {
+            width: 100px;
+            height: 100px;
+            top: 30%;
+            left: 70%;
+            animation-delay: 3s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(180deg); }
+        }
+
+        .pulse-ring {
+            position: absolute;
+            border: 2px solid rgba(99, 102, 241, 0.3);
+            border-radius: 50%;
+            animation: pulse 3s ease-out infinite;
+        }
+
+        .pulse-ring:nth-child(1) {
+            width: 200px;
+            height: 200px;
+            top: 10%;
+            left: 5%;
+        }
+
+        .pulse-ring:nth-child(2) {
+            width: 150px;
+            height: 150px;
+            top: 70%;
+            left: 85%;
+            animation-delay: 1.5s;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(0.8); opacity: 1; }
+            100% { transform: scale(1.5); opacity: 0; }
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+        }
+
+        /* Glass Morphism Effects */
+        .glass {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--shadow-xl);
+        }
+
+        .glass-dark {
+            background: rgba(15, 23, 42, 0.7);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* Login Page */
+        .login-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem 1rem;
+            position: relative;
+        }
+
+        .login-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: var(--radius-lg);
+            padding: 3.5rem 3rem;
+            box-shadow: var(--shadow-xl);
+            width: 100%;
+            max-width: 480px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            transform: translateY(0);
+            transition: var(--transition);
+        }
+
+        .login-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.2);
+        }
+
+        .login-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 6px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary), var(--accent));
+            background-size: 200% 100%;
+            animation: gradientShift 3s ease infinite;
+        }
+
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .login-header {
+            margin-bottom: 2.5rem;
+            position: relative;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .logo-icon {
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            color: white;
+            width: 60px;
+            height: 60px;
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            box-shadow: 0 8px 20px rgba(99, 102, 241, 0.3);
+            animation: bounce 2s ease-in-out infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+
+        .logo-text {
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .login-subtitle {
+            color: var(--gray-600);
+            font-size: 1.2rem;
+            font-weight: 400;
+            letter-spacing: -0.01em;
+        }
+
+        .login-options {
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .btn {
+            padding: 1.25rem 2rem;
+            border: none;
+            border-radius: var(--radius);
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            box-shadow: 0 8px 25px rgba(99, 102, 241, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px rgba(99, 102, 241, 0.4);
+        }
+
+        .btn-secondary {
+            background: var(--gray-100);
+            color: var(--gray-700);
+            border: 2px solid var(--gray-200);
+        }
+
+        .btn-secondary:hover {
+            background: var(--gray-200);
+            transform: translateY(-3px);
+            border-color: var(--gray-300);
+        }
+
+        .btn-google {
+            background: white;
+            color: var(--gray-700);
+            border: 2px solid var(--gray-300);
+            box-shadow: var(--shadow);
+        }
+
+        .btn-google:hover {
+            background: var(--gray-50);
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            margin: 2rem 0;
+            color: var(--gray-500);
+            font-weight: 500;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--gray-300), transparent);
+        }
+
+        .divider span {
+            padding: 0 1.5rem;
+            font-size: 0.9rem;
+            background: white;
+        }
+
+        .admin-login-form {
+            text-align: left;
+            background: var(--gray-50);
+            padding: 2rem;
+            border-radius: var(--radius);
+            border: 2px solid var(--gray-200);
+            box-shadow: var(--shadow);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.75rem;
+            font-weight: 600;
+            color: var(--gray-700);
+            font-size: 0.95rem;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 1.25rem 1.5rem;
+            border: 2px solid var(--gray-300);
+            border-radius: var(--radius);
+            font-size: 1rem;
+            transition: var(--transition);
+            background: white;
+            font-weight: 500;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .form-hint {
+            font-size: 0.85rem;
+            color: var(--gray-500);
+            margin-top: 0.5rem;
+            font-weight: 500;
+        }
+
+        .back-btn {
+            background: none;
+            border: none;
+            color: var(--gray-600);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-top: 1.5rem;
+            font-weight: 600;
+            transition: var(--transition);
+        }
+
+        .back-btn:hover {
+            color: var(--primary);
+            transform: translateX(-5px);
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.25rem;
+            margin-top: 2.5rem;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            font-size: 0.95rem;
+            color: var(--gray-600);
+            padding: 0.75rem;
+            background: var(--gray-50);
+            border-radius: var(--radius);
+            transition: var(--transition);
+        }
+
+        .feature-item:hover {
+            background: var(--gray-100);
+            transform: translateY(-2px);
+        }
+
+        .feature-icon {
+            color: var(--success);
+            font-size: 1.1rem;
+            width: 24px;
+            text-align: center;
+        }
+
+        /* Main App */
+        .app-header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            box-shadow: var(--shadow-lg);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.25rem 0;
+        }
+
+        .header-title {
+            display: flex;
+            align-items: center;
+            gap: 1.25rem;
+        }
+
+        .header-title h1 {
+            font-size: 1.75rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -0.02em;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1.25rem;
+        }
+
+        .user-badge {
+            background: var(--gray-100);
+            padding: 0.75rem 1.25rem;
+            border-radius: 25px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--gray-700);
+            border: 2px solid var(--gray-200);
+        }
+
+        .btn-logout {
+            background: var(--gray-100);
+            color: var(--gray-700);
+            border: 2px solid var(--gray-200);
+            padding: 0.75rem 1.5rem;
+            border-radius: 25px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-logout:hover {
+            background: var(--gray-200);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+
+        .admin-badge {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 25px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            box-shadow: 0 8px 20px rgba(99, 102, 241, 0.3);
+        }
+
+        /* Main Content */
+        .main-content {
+            padding: 3rem 0;
+            min-height: calc(100vh - 200px);
+        }
+
+        /* Health Tips - Enhanced Design */
+        .health-tips-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: var(--radius-lg);
+            padding: 2.5rem;
+            box-shadow: var(--shadow-xl);
+            margin: 3rem 0 2rem 0;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            position: relative;
+            overflow: hidden;
+            transform: translateY(0);
+            transition: var(--transition);
+        }
+
+        .health-tips-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.15);
+        }
+
+        .health-tips-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--accent), var(--secondary));
+        }
+
+        .tips-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .tips-title {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            font-weight: 700;
+            color: var(--gray-900);
+            font-size: 1.3rem;
+        }
+
+        .tips-controls {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .tip-content {
+            display: flex;
+            align-items: flex-start;
+            gap: 1.5rem;
+        }
+
+        .tip-emoji {
+            font-size: 3rem;
+            flex-shrink: 0;
+            filter: drop-shadow(0 4px 8px rgba(0,0,0,0.1));
+        }
+
+        .tip-text {
+            flex: 1;
+            color: var(--gray-700);
+            font-size: 1.15rem;
+            line-height: 1.7;
+            font-weight: 500;
+        }
+
+        .tip-nav {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .btn-icon {
+            background: var(--gray-100);
+            border: 2px solid var(--gray-200);
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 1.1rem;
+        }
+
+        .btn-icon:hover {
+            background: var(--gray-200);
+            transform: scale(1.1);
+            box-shadow: var(--shadow);
+        }
+
+        .tip-counter {
+            font-size: 1rem;
+            color: var(--gray-600);
+            font-weight: 600;
+            background: var(--gray-100);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+        }
+
+        /* Enhanced Hospital Cards */
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2.5rem;
+        }
+
+        .section-title {
+            font-size: 2rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--gray-900), var(--primary));
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -0.02em;
+        }
+
+        .hospitals-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(420px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .hospital-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: var(--radius-lg);
+            padding: 2.5rem;
+            box-shadow: var(--shadow-lg);
+            transition: var(--transition);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hospital-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+        }
+
+        .hospital-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-xl);
+        }
+
+        .hospital-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1.5rem;
+        }
+
+        .hospital-name {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--gray-900);
+            margin-bottom: 0.5rem;
+            line-height: 1.3;
+        }
+
+        .hospital-address {
+            color: var(--gray-600);
+            font-size: 1rem;
+            font-weight: 500;
+        }
+
+        .priority-badge {
+            padding: 0.75rem 1.25rem;
+            border-radius: 25px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            white-space: nowrap;
+            box-shadow: var(--shadow);
+        }
+
+        .priority-low {
+            background: linear-gradient(135deg, #10b981, #34d399);
+            color: white;
+        }
+
+        .priority-medium {
+            background: linear-gradient(135deg, #f59e0b, #fbbf24);
+            color: white;
+        }
+
+        .priority-high {
+            background: linear-gradient(135deg, #ef4444, #f87171);
+            color: white;
+        }
+
+        .priority-closed {
+            background: var(--gray-300);
+            color: var(--gray-700);
+        }
+
+        .hospital-contact {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            color: var(--gray-600);
+            margin-bottom: 1.5rem;
+            font-size: 1rem;
+            font-weight: 500;
+        }
+
+        .wait-time-display {
+            background: linear-gradient(135deg, var(--gray-50), var(--gray-100));
+            border-radius: var(--radius);
+            padding: 2rem;
+            text-align: center;
+            margin: 1.5rem 0;
+            border: 2px solid var(--gray-200);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .wait-time-display::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+        }
+
+        .wait-time {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--gray-900);
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .wait-label {
+            color: var(--gray-600);
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        .hospital-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+
+        .stat-item {
+            background: var(--gray-50);
+            padding: 1.5rem 1rem;
+            border-radius: var(--radius);
+            text-align: center;
+            border: 2px solid var(--gray-200);
+            transition: var(--transition);
+        }
+
+        .stat-item:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow);
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--primary);
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            color: var(--gray-600);
+            font-weight: 600;
+        }
+
+        .time-slots {
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 2px solid var(--gray-200);
+        }
+
+        .slots-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--gray-800);
+            margin-bottom: 1rem;
+        }
+
+        .slots-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.75rem;
+        }
+
+        .time-slot {
+            background: var(--gray-50);
+            padding: 1rem 0.5rem;
+            border-radius: var(--radius);
+            text-align: center;
+            font-size: 0.9rem;
+            color: var(--gray-700);
+            font-weight: 600;
+            border: 2px solid var(--gray-200);
+            transition: var(--transition);
+        }
+
+        .time-slot:hover {
+            background: var(--gray-100);
+            transform: translateY(-2px);
+        }
+
+        .btn-view-all {
+            width: 100%;
+            margin-top: 1.5rem;
+            padding: 1.25rem;
+            background: var(--gray-100);
+            border: 2px solid var(--gray-200);
+            border-radius: var(--radius);
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+        }
+
+        .btn-view-all:hover {
+            background: var(--gray-200);
+            transform: translateY(-3px);
+            box-shadow: var(--shadow);
+        }
+
+        /* Enhanced Admin Panel */
+        .admin-panel {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: var(--radius-lg);
+            padding: 3rem;
+            box-shadow: var(--shadow-xl);
+            margin-bottom: 3rem;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .admin-header {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .admin-title {
+            font-size: 2rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -0.02em;
+        }
+
+        .admin-controls {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2.5rem;
+        }
+
+        .update-form {
+            background: var(--gray-50);
+            padding: 2.5rem;
+            border-radius: var(--radius-lg);
+            border: 2px solid var(--gray-200);
+            box-shadow: var(--shadow);
+        }
+
+        .form-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            color: var(--gray-800);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .status-card {
+            background: linear-gradient(135deg, var(--gray-50), var(--gray-100));
+            padding: 2.5rem;
+            border-radius: var(--radius-lg);
+            border: 2px solid var(--gray-200);
+            text-align: center;
+            box-shadow: var(--shadow);
+        }
+
+        .current-wait {
+            font-size: 4rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .status-priority {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            padding: 0.75rem 1.5rem;
+            border-radius: 25px;
+            display: inline-block;
+        }
+
+        .status-details {
+            text-align: left;
+        }
+
+        .detail-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 1rem 0;
+            border-bottom: 2px solid var(--gray-200);
+            font-weight: 600;
+        }
+
+        .detail-item:last-child {
+            border-bottom: none;
+        }
+
+        /* OPD Status Section */
+        .opd-status-section {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: var(--radius-lg);
+            padding: 2.5rem;
+            box-shadow: var(--shadow-xl);
+            margin-bottom: 3rem;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .opd-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .opd-card {
+            background: var(--gray-50);
+            padding: 2rem 1.5rem;
+            border-radius: var(--radius);
+            border: 2px solid var(--gray-200);
+            text-align: center;
+            transition: var(--transition);
+        }
+
+        .opd-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .opd-number {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        .opd-status {
+            font-size: 1rem;
+            font-weight: 700;
+            padding: 0.75rem 1.5rem;
+            border-radius: 25px;
+            display: inline-block;
+            box-shadow: var(--shadow);
+        }
+
+        .status-available {
+            background: linear-gradient(135deg, #10b981, #34d399);
+            color: white;
+        }
+
+        .status-busy {
+            background: linear-gradient(135deg, #f59e0b, #fbbf24);
+            color: white;
+        }
+
+        .status-closed {
+            background: var(--gray-300);
+            color: var(--gray-700);
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            padding: 2rem;
+            backdrop-filter: blur(10px);
+        }
+
+        .modal {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: var(--radius-lg);
+            max-width: 550px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: var(--shadow-xl);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            transform: scale(0.9);
+            animation: modalAppear 0.3s ease-out forwards;
+        }
+
+        @keyframes modalAppear {
+            to { transform: scale(1); }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 2rem 2rem 1rem 2rem;
+            border-bottom: 2px solid var(--gray-200);
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--gray-900);
+        }
+
+        .modal-close {
+            background: var(--gray-100);
+            border: 2px solid var(--gray-200);
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--gray-600);
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+
+        .modal-close:hover {
+            background: var(--gray-200);
+            transform: rotate(90deg);
+        }
+
+        .modal-content {
+            padding: 2rem;
+        }
+
+        .hospital-info {
+            background: var(--gray-50);
+            padding: 2rem;
+            border-radius: var(--radius);
+            margin-bottom: 2rem;
+            border: 2px solid var(--gray-200);
+        }
+
+        .info-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            color: var(--gray-700);
+            font-weight: 500;
+        }
+
+        .info-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .modal-wait-time {
+            background: linear-gradient(135deg, var(--gray-50), var(--gray-100));
+            padding: 1.5rem;
+            border-radius: var(--radius);
+            text-align: center;
+            margin: 1.5rem 0;
+            border: 2px solid var(--gray-200);
+        }
+
+        /* Utility Classes */
+        .hidden {
+            display: none !important;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .mt-2 {
+            margin-top: 0.5rem;
+        }
+
+        .mb-2 {
+            margin-bottom: 0.5rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hospitals-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .admin-controls {
+                grid-template-columns: 1fr;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+
+            .user-info {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .opd-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .login-card {
+                padding: 2.5rem 2rem;
+            }
+
+            .health-tips-card {
+                padding: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Animated Background -->
+    <div class="animated-bg">
+        <div class="floating-shapes">
+            <div class="shape"></div>
+            <div class="shape"></div>
+            <div class="shape"></div>
+            <div class="shape"></div>
+        </div>
+        <div class="pulse-ring"></div>
+        <div class="pulse-ring"></div>
+    </div>
+
+    <!-- Login Page -->
+    <div id="loginPage" class="login-container">
+        <div class="login-card">
+            <div class="login-header">
+                <div class="logo">
+                    <div class="logo-icon">
+                        <i class="fas fa-hospital"></i>
+                    </div>
+                    <div class="logo-text">HospitalWait</div>
+                </div>
+                <p class="login-subtitle">Advanced Healthcare Management Platform</p>
+            </div>
+
+            <div class="login-options">
+                <button class="btn btn-google" onclick="loginWithGoogle()">
+                    <i class="fab fa-google"></i>
+                    Continue with Google
+                </button>
+
+                <button class="btn btn-secondary" onclick="loginAsGuest()">
+                    <i class="fas fa-user"></i>
+                    Continue as Guest
+                </button>
+
+                <div class="divider">
+                    <span>OR</span>
+                </div>
+
+                <button class="btn btn-primary" onclick="showAdminLogin()">
+                    <i class="fas fa-user-md"></i>
+                    Hospital Staff Login
+                </button>
+
+                <div id="adminLoginForm" class="admin-login-form hidden">
+                    <h3 class="form-title">Staff Access Portal</h3>
+                    <div class="form-group">
+                        <label class="form-label">Hospital ID</label>
+                        <input type="text" class="form-input" id="adminId" placeholder="Enter hospital ID">
+                        <div class="form-hint">Available IDs: HOSP001, HOSP002, HOSP003</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Email Address</label>
+                        <input type="email" class="form-input" id="adminEmail" placeholder="staff@hospital.com">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Password</label>
+                        <input type="password" class="form-input" id="adminPassword" placeholder="Enter your password">
+                    </div>
+
+                    <button class="btn btn-primary" onclick="loginAsAdmin(event)">
+                        <i class="fas fa-sign-in-alt"></i>
+                        Access Dashboard
+                    </button>
+
+                    <button class="back-btn" onclick="hideAdminLogin()">
+                        <i class="fas fa-arrow-left"></i>
+                        Back to options
+                    </button>
+                </div>
+            </div>
+
+            <div class="features-grid">
+                <div class="feature-item">
+                    <i class="fas fa-bolt feature-icon"></i>
+                    <span>Real-time OPD Updates</span>
+                </div>
+                <div class="feature-item">
+                    <i class="fas fa-palette feature-icon"></i>
+                    <span>Smart Priority System</span>
+                </div>
+                <div class="feature-item">
+                    <i class="fas fa-heart feature-icon"></i>
+                    <span>Health Insights</span>
+                </div>
+                <div class="feature-item">
+                    <i class="fas fa-hospital feature-icon"></i>
+                    <span>Multi-Hospital Network</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Application -->
+    <div id="mainApp" class="hidden">
+        <header class="app-header">
+            <div class="container">
+                <div class="header-content">
+                    <div class="header-title">
+                        <i class="fas fa-hospital" style="color: var(--primary); font-size: 2rem;"></i>
+                        <h1>HospitalWait Pro</h1>
+                    </div>
+                    <div class="user-info">
+                        <div id="userRoleDisplay" class="user-badge">
+                            <i class="fas fa-user"></i>
+                            Guest User
+                        </div>
+                        <button class="btn-logout" onclick="logout()">
+                            <i class="fas fa-sign-out-alt"></i>
+                            Logout
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <div class="container">
+                <!-- Admin Dashboard -->
+                <div id="adminPanel" class="admin-panel hidden">
+                    <div class="admin-header">
+                        <i class="fas fa-tachometer-alt" style="color: var(--primary); font-size: 2rem;"></i>
+                        <h2 class="admin-title">Hospital Management Dashboard</h2>
+                        <div class="admin-badge">
+                            <i class="fas fa-user-md"></i>
+                            Staff Mode
+                        </div>
+                    </div>
+
+                    <div class="admin-controls">
+                        <div class="update-form">
+                            <h3 class="form-title">Update OPD Status</h3>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">Patients in Queue</label>
+                                    <input type="number" class="form-input" id="queueLength" min="0" value="12">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Doctors Available</label>
+                                    <input type="number" class="form-input" id="availableDoctors" min="1" value="3">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Average Consultation (minutes)</label>
+                                <input type="number" class="form-input" id="consultationTime" min="1" value="8">
+                            </div>
+                            <button class="btn btn-primary" onclick="updateHospitalData()">
+                                <i class="fas fa-sync-alt"></i>
+                                Update Waiting Time
+                            </button>
+                        </div>
+
+                        <div class="status-card">
+                            <div class="current-wait" id="currentWaitTime">32</div>
+                            <div class="status-priority priority-medium" id="statusPriority">Moderate Wait</div>
+                            <div class="status-details">
+                                <div class="detail-item">
+                                    <span>Queue Length:</span>
+                                    <strong id="detailQueue">12 patients</strong>
+                                </div>
+                                <div class="detail-item">
+                                    <span>Doctors Available:</span>
+                                    <strong id="detailDoctors">3 doctors</strong>
+                                </div>
+                                <div class="detail-item">
+                                    <span>Last Updated:</span>
+                                    <strong id="detailUpdated">Just now</strong>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- OPD Status Section -->
+                    <div class="opd-status-section">
+                        <h3 class="form-title">
+                            <i class="fas fa-door-open"></i>
+                            OPD Room Status
+                        </h3>
+                        <div class="opd-grid" id="opdStatusGrid">
+                            <!-- OPD rooms will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Patient View -->
+                <div id="patientView">
+                    <div class="section-header">
+                        <h2 class="section-title">
+                            <i class="fas fa-map-marker-alt" style="color: var(--primary);"></i>
+                            Nearby Healthcare Centers
+                        </h2>
+                        <div class="user-badge" id="welcomeMessage">
+                            <i class="fas fa-user-clock"></i>
+                            Live Updates Active
+                        </div>
+                    </div>
+
+                    <div class="hospitals-grid" id="hospitalsList">
+                        <!-- Hospitals will be loaded here -->
+                    </div>
+                </div>
+
+                <!-- Enhanced Health Tips -->
+                <div class="health-tips-card">
+                    <div class="tips-header">
+                        <div class="tips-title">
+                            <i class="fas fa-lightbulb" style="color: var(--accent);"></i>
+                            Health & Wellness Tips
+                        </div>
+                        <div class="tips-controls">
+                            <button class="btn-icon" onclick="closeTips()">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="tip-content">
+                        <div class="tip-emoji" id="currentTipEmoji">💧</div>
+                        <div class="tip-text" id="currentTipText">Stay hydrated by drinking at least 8 glasses of water daily to maintain optimal health and energy levels.</div>
+                    </div>
+                    <div class="tip-nav">
+                        <button class="btn-icon" onclick="prevTip()">
+                            <i class="fas fa-chevron-left"></i>
+                        </button>
+                        <span class="tip-counter" id="tipCounter">1/12</span>
+                        <button class="btn-icon" onclick="nextTip()">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Enhanced Modal -->
+    <div id="hospitalModal" class="modal-overlay hidden">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title" id="modalHospitalName">Hospital Details</h3>
+                <button class="modal-close" onclick="closeModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-content">
+                <div class="hospital-info">
+                    <div class="info-item">
+                        <i class="fas fa-map-marker-alt" style="color: var(--primary);"></i>
+                        <span id="modalHospitalAddress">Address will appear here</span>
+                    </div>
+                    <div class="info-item">
+                        <i class="fas fa-phone" style="color: var(--primary);"></i>
+                        <span id="modalHospitalPhone">Phone number</span>
+                    </div>
+                </div>
+                
+                <div class="modal-wait-time">
+                    <div class="wait-time" id="modalWaitTime">25 min</div>
+                    <div class="wait-label">Current Estimated Wait Time</div>
+                </div>
+
+                <div class="time-slots">
+                    <h4 class="slots-title">
+                        <i class="fas fa-clock" style="color: var(--primary);"></i>
+                        Available Time Slots Today
+                    </h4>
+                    <div class="slots-grid" id="modalTimeSlots">
+                        <!-- Time slots will be loaded here -->
+                    </div>
+                </div>
+
+                <button class="btn btn-primary" style="width: 100%; margin-top: 2rem; padding: 1.5rem;">
+                    <i class="fas fa-bell"></i>
+                    Get Notification When Wait Time Drops
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Health Tips Data
+        const healthTips = [
+            { id: 1, tip: "💧 Stay hydrated by drinking at least 8 glasses of water daily to maintain optimal health and energy levels.", emoji: "💧" },
+            { id: 2, tip: "🧘 Practice deep breathing exercises for 5 minutes daily to reduce stress and improve mental clarity.", emoji: "🧘" },
+            { id: 3, tip: "🚭 Avoid smoking and limit alcohol consumption for better cardiovascular health and lung function.", emoji: "🚭" },
+            { id: 4, tip: "🚶 Walk for 30 minutes daily to boost circulation, improve mood, and maintain healthy weight.", emoji: "🚶" },
+            { id: 5, tip: "🍎 Include colorful fruits and vegetables in your diet for essential vitamins and antioxidants.", emoji: "🍎" },
+            { id: 6, tip: "💤 Ensure 7-8 hours of quality sleep each night for proper immune function and mental wellness.", emoji: "💤" },
+            { id: 7, tip: "🥗 Start your day with a protein-rich breakfast to maintain energy levels and control cravings.", emoji: "🥗" },
+            { id: 8, tip: "📵 Take regular breaks from screens to reduce eye strain and improve posture throughout the day.", emoji: "📵" },
+            { id: 9, tip: "🧠 Challenge your mind with puzzles or reading to maintain cognitive health and memory.", emoji: "🧠" },
+            { id: 10, tip: "🌞 Get 15 minutes of sunlight daily for vitamin D production and improved mood regulation.", emoji: "🌞" },
+            { id: 11, tip: "🧼 Wash hands frequently with soap for 20 seconds to prevent spread of infections and illnesses.", emoji: "🧼" },
+            { id: 12, tip: "❤️ Practice gratitude daily by noting 3 things you're thankful for to improve mental wellbeing.", emoji: "❤️" }
+        ];
+
+        // ... (Rest of the JavaScript code remains exactly the same as previous version)
+        // Hospitals data and all functions remain unchanged from the previous working version
+        const hospitals = [
+            {
+                id: 'HOSP001',
+                name: 'City General Hospital',
+                address: '123 Healthcare Avenue, Medical District',
+                phone: '+1 (555) 123-4567',
+                opdStatus: {
+                    queueLength: 12,
+                    availableDoctors: 3,
+                    consultationTime: 8,
+                    waitingTime: 32,
+                    priority: 'medium',
+                    lastUpdated: '2 minutes ago'
+                },
+                timeSlots: ['09:00-10:00', '10:00-11:00', '11:00-12:00', '14:00-15:00', '15:00-16:00'],
+                opdRooms: [
+                    { number: 'OPD-01', status: 'available', doctor: 'Dr. Sharma' },
+                    { number: 'OPD-02', status: 'busy', doctor: 'Dr. Gupta' },
+                    { number: 'OPD-03', status: 'available', doctor: 'Dr. Patel' },
+                    { number: 'OPD-04', status: 'closed', doctor: 'Dr. Kumar' }
+                ]
+            },
+            {
+                id: 'HOSP002',
+                name: 'Community Health Center',
+                address: '456 Wellness Street, Downtown',
+                phone: '+1 (555) 234-5678',
+                opdStatus: {
+                    queueLength: 8,
+                    availableDoctors: 2,
+                    consultationTime: 10,
+                    waitingTime: 40,
+                    priority: 'medium',
+                    lastUpdated: '5 minutes ago'
+                },
+                timeSlots: ['08:30-09:30', '09:30-10:30', '10:30-11:30', '13:00-14:00', '14:00-15:00'],
+                opdRooms: [
+                    { number: 'OPD-01', status: 'busy', doctor: 'Dr. Reddy' },
+                    { number: 'OPD-02', status: 'available', doctor: 'Dr. Singh' },
+                    { number: 'OPD-03', status: 'closed', doctor: 'Dr. Mehta' }
+                ]
+            },
+            {
+                id: 'HOSP003',
+                name: 'Metro Specialty Clinic',
+                address: '789 Care Boulevard, Uptown',
+                phone: '+1 (555) 345-6789',
+                opdStatus: {
+                    queueLength: 4,
+                    availableDoctors: 2,
+                    consultationTime: 15,
+                    waitingTime: 30,
+                    priority: 'low',
+                    lastUpdated: 'Just now'
+                },
+                timeSlots: ['10:00-11:00', '11:00-12:00', '13:00-14:00', '14:00-15:00', '15:00-16:00'],
+                opdRooms: [
+                    { number: 'OPD-01', status: 'available', doctor: 'Dr. Joshi' },
+                    { number: 'OPD-02', status: 'available', doctor: 'Dr. Iyer' },
+                    { number: 'OPD-03', status: 'busy', doctor: 'Dr. Nair' }
+                ]
+            }
+        ];
+
+        // App State
+        let currentUser = { role: 'guest' };
+        let currentTipIndex = 0;
+        let tipsVisible = true;
+        let currentHospital = null;
+
+        // Initialize the app
+        function init() {
+            showCurrentTip();
+            startTipRotation();
+        }
+
+        // Login Functions
+        function loginWithGoogle() {
+            currentUser = { role: 'user', name: 'Google User', email: 'user@gmail.com' };
+            showMainApp();
+        }
+
+        function loginAsGuest() {
+            currentUser = { role: 'guest' };
+            showMainApp();
+        }
+
+        function showAdminLogin() {
+            document.getElementById('adminLoginForm').classList.remove('hidden');
+        }
+
+        function hideAdminLogin() {
+            document.getElementById('adminLoginForm').classList.add('hidden');
+        }
+
+        function loginAsAdmin(event) {
+            // safely handle cases where `event` may be undefined (called programmatically)
+            if (event && typeof event.preventDefault === 'function') event.preventDefault();
+            const adminIdEl = document.getElementById('adminId');
+            const adminId = (adminIdEl && adminIdEl.value) ? adminIdEl.value.toUpperCase() : '';
+            const hospital = hospitals.find(h => h.id === adminId);
+            
+            if (hospital) {
+                currentUser = { role: 'admin', hospital: hospital };
+                currentHospital = hospital;
+                showMainApp();
+            } else {
+                alert('Invalid Hospital ID. Please try:\n\nHOSP001 - City General Hospital\nHOSP002 - Community Health Center\nHOSP003 - Metro Specialty Clinic');
+            }
+        }
+
+        function logout() {
+            currentUser = { role: 'guest' };
+            currentHospital = null;
+            document.getElementById('mainApp').classList.add('hidden');
+            document.getElementById('loginPage').classList.remove('hidden');
+            hideAdminLogin();
+        }
+
+        function showMainApp() {
+            document.getElementById('loginPage').classList.add('hidden');
+            document.getElementById('mainApp').classList.remove('hidden');
+            
+            if (currentUser.role === 'admin') {
+                document.getElementById('adminPanel').classList.remove('hidden');
+                document.getElementById('patientView').classList.add('hidden');
+                document.getElementById('userRoleDisplay').innerHTML = '<i class="fas fa-user-md"></i> ' + currentHospital.name;
+                updateAdminPanel();
+            } else {
+                document.getElementById('adminPanel').classList.add('hidden');
+                document.getElementById('patientView').classList.remove('hidden');
+                document.getElementById('userRoleDisplay').innerHTML = '<i class="fas fa-user"></i> ' + 
+                    (currentUser.role === 'user' ? currentUser.name : 'Guest User');
+                loadHospitals();
+            }
+        }
+
+        // Health Tips Functions
+        function showCurrentTip() {
+            if (!tipsVisible) return;
+            const tip = healthTips[currentTipIndex];
+            document.getElementById('currentTipEmoji').textContent = tip.emoji;
+            document.getElementById('currentTipText').textContent = tip.tip;
+            document.getElementById('tipCounter').textContent = `${currentTipIndex + 1}/${healthTips.length}`;
+        }
+
+        function nextTip() {
+            currentTipIndex = (currentTipIndex + 1) % healthTips.length;
+            showCurrentTip();
+        }
+
+        function prevTip() {
+            currentTipIndex = (currentTipIndex - 1 + healthTips.length) % healthTips.length;
+            showCurrentTip();
+        }
+
+        function closeTips() {
+            tipsVisible = false;
+            document.querySelector('.health-tips-card').classList.add('hidden');
+        }
+
+        function startTipRotation() {
+            setInterval(() => {
+                if (tipsVisible) {
+                    nextTip();
+                }
+            }, 120000);
+        }
+
+        // Hospital Functions
+        function loadHospitals() {
+            const container = document.getElementById('hospitalsList');
+            container.innerHTML = '';
+            
+            hospitals.forEach(hospital => {
+                const priorityClass = `priority-${hospital.opdStatus.priority}`;
+                const priorityText = getPriorityText(hospital.opdStatus.priority);
+                const availableDocs = (hospital.opdRooms || []).filter(r => r.status === 'available').map(r => r.doctor);
+                
+                const card = document.createElement('div');
+                card.className = 'hospital-card';
+                card.innerHTML = `
+                    <div class="hospital-header">
+                        <div>
+                            <div class="hospital-name">${hospital.name}</div>
+                            <div class="hospital-address">${hospital.address}</div>
+                        </div>
+                        <div class="priority-badge ${priorityClass}">${priorityText}</div>
+                    </div>
+                    
+                    <div class="hospital-contact">
+                        <i class="fas fa-phone"></i>
+                        ${hospital.phone}
+                    </div>
+                    <div class="hospital-contact">
+                        <i class="fas fa-user-md"></i>
+                        ${availableDocs.length} available${availableDocs.length ? ': ' + availableDocs.join(', ') : ''}
+                    </div>
+                    
+                    <div class="wait-time-display">
+                        <div class="wait-time">${hospital.opdStatus.waitingTime} min</div>
+                        <div class="wait-label">Estimated Waiting Time</div>
+                    </div>
+                    
+                    <div class="hospital-stats">
+                        <div class="stat-item">
+                            <div class="stat-value">${hospital.opdStatus.queueLength}</div>
+                            <div class="stat-label">Patients in Queue</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">${hospital.opdStatus.availableDoctors}</div>
+                            <div class="stat-label">Doctors Available</div>
+                        </div>
+                    </div>
+
+                    <div class="time-slots">
+                        <div class="slots-title">OPD Doctors</div>
+                        <div class="slots-grid">
+                            ${(hospital.opdRooms || []).map(room => `
+                                <div class="time-slot" style="display:flex;justify-content:space-between;align-items:center;gap:.75rem;">
+                                    <span>${room.doctor}</span>
+                                    <span class="opd-status status-${room.status}">${room.status.charAt(0).toUpperCase() + room.status.slice(1)}</span>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                    
+                    <div class="time-slots">
+                        <div class="slots-title">Available Time Slots</div>
+                        <div class="slots-grid">
+                            ${hospital.timeSlots.slice(0, 4).map(slot => `
+                                <div class="time-slot">${slot}</div>
+                            `).join('')}
+                        </div>
+                        <button class="btn-view-all" onclick="showHospitalDetails('${hospital.id}')">
+                            <i class="fas fa-eye"></i>
+                            View All Details
+                        </button>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function getPriorityText(priority) {
+            const texts = {
+                low: '🟢 Low Wait',
+                medium: '🟡 Moderate Wait', 
+                high: '🔴 High Wait',
+                closed: '⚫ Closed'
+            };
+            return texts[priority] || texts.medium;
+        }
+
+        function showHospitalDetails(hospitalId) {
+            const hospital = hospitals.find(h => h.id === hospitalId);
+            if (!hospital) return;
+
+            document.getElementById('modalHospitalName').textContent = hospital.name;
+            document.getElementById('modalHospitalAddress').textContent = hospital.address;
+            document.getElementById('modalHospitalPhone').textContent = hospital.phone;
+            document.getElementById('modalWaitTime').textContent = hospital.opdStatus.waitingTime + ' min';
+
+            const slotsContainer = document.getElementById('modalTimeSlots');
+            slotsContainer.innerHTML = hospital.timeSlots.map(slot => `
+                <div class="time-slot">${slot}</div>
+            `).join('');
+
+            document.getElementById('hospitalModal').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('hospitalModal').classList.add('hidden');
+        }
+
+        // Admin Functions
+        function updateAdminPanel() {
+            if (!currentHospital) return;
+
+            const hospital = currentHospital;
+            
+            document.getElementById('queueLength').value = hospital.opdStatus.queueLength;
+            // Initialize with total number of doctor rows, not currently-available count
+            const availableDoctorsInput = document.getElementById('availableDoctors');
+            availableDoctorsInput.value = (hospital.opdRooms || []).length;
+            // Attach a live input handler to dynamically resize doctor entries
+            availableDoctorsInput.oninput = function() {
+                resizeDoctorCount();
+            };
+            document.getElementById('consultationTime').value = hospital.opdStatus.consultationTime;
+            
+            updateStatusDisplay();
+            updateOpdRooms();
+        }
+
+        function updateHospitalData() {
+            if (!currentHospital) return;
+
+            const queueLength = parseInt(document.getElementById('queueLength').value);
+            // Treat input as TOTAL number of doctor rows to render/edit
+            const totalDoctors = Math.max(0, parseInt(document.getElementById('availableDoctors').value));
+            const consultationTime = parseInt(document.getElementById('consultationTime').value);
+            
+            // Resize OPD rooms to match totalDoctors
+            if (!Array.isArray(currentHospital.opdRooms)) currentHospital.opdRooms = [];
+            const currentLen = currentHospital.opdRooms.length;
+            if (totalDoctors > currentLen) {
+                for (let i = currentLen; i < totalDoctors; i++) {
+                    const nextIndex = i + 1;
+                    const number = 'OPD-' + String(nextIndex).padStart(2, '0');
+                    currentHospital.opdRooms.push({ number, status: 'available', doctor: '' });
+                }
+            } else if (totalDoctors < currentLen) {
+                currentHospital.opdRooms.splice(totalDoctors);
+            }
+            // Derive available doctors from room statuses
+            const availableDoctors = currentHospital.opdRooms.filter(r => r.status === 'available').length;
+            
+            const waitingTime = Math.round((queueLength * consultationTime) / Math.max(availableDoctors, 1));
+            
+            let priority = 'medium';
+
+            if (waitingTime <= 15) priority = 'low';
+            else if (waitingTime <= 30) priority = 'medium';
+            else priority = 'high';
+
+            currentHospital.opdStatus.queueLength = queueLength;
+            currentHospital.opdStatus.availableDoctors = availableDoctors;
+            currentHospital.opdStatus.consultationTime = consultationTime;
+            currentHospital.opdStatus.waitingTime = waitingTime;
+            currentHospital.opdStatus.priority = priority;
+            currentHospital.opdStatus.lastUpdated = 'Just now';
+
+            updateStatusDisplay();
+            updateOpdRooms();
+
+            alert(`✅ Hospital data updated successfully!\n\nNew wait time: ${waitingTime} minutes\nPriority: ${getPriorityText(priority)}\nQueue: ${queueLength} patients\nDoctors: ${availableDoctors} available`);
+        }
+
+        function updateStatusDisplay() {
+            if (!currentHospital) return;
+
+            const hospital = currentHospital;
+            const priorityClass = `priority-${hospital.opdStatus.priority}`;
+            
+            document.getElementById('currentWaitTime').textContent = hospital.opdStatus.waitingTime;
+            document.getElementById('statusPriority').textContent = getPriorityText(hospital.opdStatus.priority);
+            document.getElementById('statusPriority').className = `status-priority ${priorityClass}`;
+            document.getElementById('detailQueue').textContent = hospital.opdStatus.queueLength + ' patients';
+            document.getElementById('detailDoctors').textContent = hospital.opdStatus.availableDoctors + ' doctors';
+            document.getElementById('detailUpdated').textContent = hospital.opdStatus.lastUpdated;
+        }
+
+        function updateOpdRooms() {
+            if (!currentHospital) return;
+
+            const container = document.getElementById('opdStatusGrid');
+            container.innerHTML = '';
+
+            currentHospital.opdRooms.forEach((room, idx) => {
+                const statusClass = `status-${room.status}`;
+                const statusText = room.status.charAt(0).toUpperCase() + room.status.slice(1);
+                
+                const roomCard = document.createElement('div');
+                roomCard.className = 'opd-card';
+                roomCard.innerHTML = `
+                    <div class="opd-number">${room.number}</div>
+                    <div class="opd-status ${statusClass}">${statusText}</div>
+                    <div style="margin-top: 1rem; font-size: 0.9rem; color: var(--gray-600); font-weight: 600;">${room.doctor}</div>
+                    <div style="margin-top:1rem; display:flex; flex-direction:column; gap:.5rem;">
+                        <label style="font-size:.85rem; color:var(--gray-700); font-weight:600;">Doctor Name
+                            <input type="text" value="${room.doctor}" onchange="setRoomDoctor(${idx}, this.value)" class="form-input" style="padding:.6rem 1rem; margin-top:.35rem;" />
+                        </label>
+                        <label style="font-size:.85rem; color:var(--gray-700); font-weight:600;">Status
+                            <select onchange="setRoomStatus(${idx}, this.value)" class="form-input" style="padding:.6rem 1rem; margin-top:.35rem;">
+                                <option value="available" ${room.status==='available'?'selected':''}>Available</option>
+                                <option value="busy" ${room.status==='busy'?'selected':''}>Busy</option>
+                                <option value="closed" ${room.status==='closed'?'selected':''}>Closed</option>
+                            </select>
+                        </label>
+                    </div>
+                `;
+                container.appendChild(roomCard);
+            });
+
+            // keep available doctors count synced to rooms
+            syncAvailableDoctorsFromRooms();
+        }
+
+        function setRoomStatus(index, status) {
+            if (!currentHospital || !currentHospital.opdRooms[index]) return;
+            currentHospital.opdRooms[index].status = status;
+            updateOpdRooms();
+        }
+
+        function setRoomDoctor(index, name) {
+            if (!currentHospital || !currentHospital.opdRooms[index]) return;
+            currentHospital.opdRooms[index].doctor = name;
+        }
+
+        function syncAvailableDoctorsFromRooms() {
+            if (!currentHospital) return;
+            const count = (currentHospital.opdRooms || []).filter(r => r.status === 'available').length;
+            currentHospital.opdStatus.availableDoctors = count;
+            updateStatusDisplay();
+        }
+
+        function resizeDoctorCount() {
+            if (!currentHospital) return;
+            const totalDoctors = Math.max(0, parseInt(document.getElementById('availableDoctors').value));
+            if (!Array.isArray(currentHospital.opdRooms)) currentHospital.opdRooms = [];
+            const currentLen = currentHospital.opdRooms.length;
+            if (totalDoctors > currentLen) {
+                for (let i = currentLen; i < totalDoctors; i++) {
+                    const nextIndex = i + 1;
+                    const number = 'OPD-' + String(nextIndex).padStart(2, '0');
+                    currentHospital.opdRooms.push({ number, status: 'available', doctor: '' });
+                }
+            } else if (totalDoctors < currentLen) {
+                currentHospital.opdRooms.splice(totalDoctors);
+            }
+            // Recompute available doctors and waiting time based on current inputs
+            const queueLength = parseInt(document.getElementById('queueLength').value);
+            const consultationTime = parseInt(document.getElementById('consultationTime').value);
+            const availableDoctors = currentHospital.opdRooms.filter(r => r.status === 'available').length;
+            const waitingTime = Math.round((queueLength * consultationTime) / Math.max(availableDoctors, 1));
+            let priority = 'medium';
+            if (waitingTime <= 15) priority = 'low';
+            else if (waitingTime <= 30) priority = 'medium';
+            else priority = 'high';
+            currentHospital.opdStatus.availableDoctors = availableDoctors;
+            currentHospital.opdStatus.waitingTime = waitingTime;
+            currentHospital.opdStatus.priority = priority;
+            currentHospital.opdStatus.lastUpdated = 'Just now';
+            updateOpdRooms();
+            updateStatusDisplay();
+        }
+
+        // Initialize the app when DOM is ready
+        window.addEventListener('DOMContentLoaded', init);
+
+        // Attach modal click handler safely (guard if element isn't present)
+        (function attachModalHandler() {
+            const modal = document.getElementById('hospitalModal');
+            if (!modal) return;
+            modal.addEventListener('click', function(e) {
+                if (e.target === this) closeModal();
+            });
+        })();
+    </script>
+
+    <!-- Hospital location map (Leaflet) -->
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
+    <style>
+        /* Map card styles (keeps visual style consistent with existing design) */
+        #mapCard { max-width: 1100px; margin: 2rem auto; }
+        #hospitalMap { width: 100%; height: 420px; border-radius: 12px; box-shadow: var(--shadow); }
+        @media (max-width: 640px) { #hospitalMap { height: 300px; } }
+    </style>
+
+    <div id="mapCard" class="container">
+        <div class="login-card glass-dark" style="padding:1rem 1rem;">
+            <h3 style="color:white;margin-bottom:.5rem;">Hospital Location</h3>
+            <div id="hospitalMap" aria-label="Hospital location map"></div>
+            <p style="color:rgba(255,255,255,0.9);font-size:.9rem;margin-top:.6rem;">Replace the latitude/longitude in the script to point the map to your hospital. The map uses OpenStreetMap (Leaflet.js). If you prefer Google Maps, see the notes below.</p>
+        </div>
+    </div>
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+    <script>
+        // --- CONFIG (Edit these coordinates) ---
+        // Replace these with your hospital's latitude and longitude
+        const hospitalLat = 12.9715987; // example latitude (change this)
+        const hospitalLng = 77.594566;  // example longitude (change this)
+        const hospitalName = "My Hospital"; // change to your hospital's name
+
+        // Initialize Leaflet map
+        const map = L.map('hospitalMap', { scrollWheelZoom: false }).setView([hospitalLat, hospitalLng], 15);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+        const marker = L.marker([hospitalLat, hospitalLng]).addTo(map)
+            .bindPopup(`<strong>${hospitalName}</strong><br><a href="https://www.google.com/maps/dir/?api=1&destination=${hospitalLat},${hospitalLng}" target="_blank" rel="noopener">Get directions</a>`);
+
+        // If this page is embedded in a layout that might hide/show the map,
+        // invalidate size shortly after load so tiles render correctly.
+        setTimeout(() => { try { map.invalidateSize(); } catch (e) { /* ignore */ } }, 300);
+    </script>
+
+</body>
+</html>
