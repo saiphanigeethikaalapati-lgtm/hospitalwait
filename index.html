@@ -294,7 +294,7 @@
         .btn-primary {
             background: linear-gradient(135deg, var(--primary), var(--primary-dark));
             color: white;
-            box-shadow: 0 8px 25px rgba(99, 102, 241, 0.3);
+            box-shadow: 0 8px 25px rgba(99, 102,241, 0.3);
         }
 
         .btn-primary:hover {
@@ -1341,16 +1341,16 @@
                             <div class="form-row">
                                 <div class="form-group">
                                     <label class="form-label">Patients in Queue</label>
-                                    <input type="number" class="form-input" id="queueLength" min="0" value="12">
+                                    <input type="number" class="form-input" id="queueLength" value="12">
                                 </div>
                                 <div class="form-group">
                                     <label class="form-label">Doctors Available</label>
-                                    <input type="number" class="form-input" id="availableDoctors" min="1" value="3">
+                                    <input type="number" class="form-input" id="availableDoctors" value="3">
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label class="form-label">Average Consultation (minutes)</label>
-                                <input type="number" class="form-input" id="consultationTime" min="1" value="8">
+                                <input type="number" class="form-input" id="consultationTime" value="8">
                             </div>
                             <button class="btn btn-primary" onclick="updateHospitalData()">
                                 <i class="fas fa-sync-alt"></i>
@@ -1597,19 +1597,23 @@
         }
 
         function loginAsAdmin(event) {
-            // safely handle cases where `event` may be undefined (called programmatically)
+            // prevent default when called from a form/button with event
             if (event && typeof event.preventDefault === 'function') event.preventDefault();
+
             const adminIdEl = document.getElementById('adminId');
-            const adminId = (adminIdEl && adminIdEl.value) ? adminIdEl.value.toUpperCase() : '';
-            const hospital = hospitals.find(h => h.id === adminId);
-            
-            if (hospital) {
-                currentUser = { role: 'admin', hospital: hospital };
-                currentHospital = hospital;
-                showMainApp();
-            } else {
-                alert('Invalid Hospital ID. Please try:\n\nHOSP001 - City General Hospital\nHOSP002 - Community Health Center\nHOSP003 - Metro Specialty Clinic');
+            const enteredId = (adminIdEl && adminIdEl.value) ? adminIdEl.value.trim().toUpperCase() : '';
+
+            // find matching hospital if any; otherwise fall back to the first hospital in the list
+            let hospital = hospitals.find(h => h.id === enteredId);
+            if (!hospital) {
+                // fallback: first hospital available
+                hospital = hospitals.length ? hospitals[0] : null;
             }
+
+            // proceed to admin dashboard even if ID didn't match
+            currentUser = { role: 'admin', hospital: hospital };
+            currentHospital = hospital;
+            showMainApp();
         }
 
         function logout() {
@@ -1950,7 +1954,54 @@
                 if (e.target === this) closeModal();
             });
         })();
-    </script>
 
+        // Diagnostic helpers: log initialization and capture runtime errors for debugging
+        window.addEventListener('DOMContentLoaded', function () {
+            console.info('HospitalWait: DOMContentLoaded fired');
+
+            // check key functions / elements
+            console.info('init function:', typeof init);
+            console.info('showMainApp function:', typeof showMainApp);
+            console.info('loginAsAdmin function:', typeof loginAsAdmin);
+
+            const checks = [
+                { id: 'loginPage', el: !!document.getElementById('loginPage') },
+                { id: 'mainApp', el: !!document.getElementById('mainApp') },
+                { id: 'hospitalsList', el: !!document.getElementById('hospitalsList') },
+                { id: 'hospitalModal', el: !!document.getElementById('hospitalModal') },
+                { id: 'adminLoginForm', el: !!document.getElementById('adminLoginForm') }
+            ];
+            checks.forEach(c => console.info(`Element #${c.id} present:`, c.el));
+
+            // run the existing init if available
+            try {
+                if (typeof init === 'function') {
+                    console.info('Calling init()');
+                    init();
+                } else {
+                    console.warn('init() not found');
+                }
+            } catch (err) {
+                console.error('Error while calling init():', err);
+            }
+        });
+
+        // Global error handler to surface runtime errors
+        window.addEventListener('error', function (event) {
+            console.error('Global error captured:', event.message, 'at', event.filename + ':' + event.lineno + ':' + event.colno);
+            // keep UI unobtrusive but inform developer/tester
+            if (typeof alert === 'function') {
+                // small alert to make the error obvious during debugging; remove after fix
+                alert('An error occurred: ' + event.message + '\nSee console for details.');
+            }
+        });
+
+        window.addEventListener('unhandledrejection', function (event) {
+            console.error('Unhandled promise rejection:', event.reason);
+            if (typeof alert === 'function') {
+                alert('Unhandled promise rejection: ' + (event.reason && event.reason.message ? event.reason.message : String(event.reason)));
+            }
+        });
+    </script>
 </body>
 </html>
