@@ -1597,23 +1597,27 @@
         }
 
         function loginAsAdmin(event) {
-            // prevent default when called from a form/button with event
             if (event && typeof event.preventDefault === 'function') event.preventDefault();
-
-            const adminIdEl = document.getElementById('adminId');
-            const enteredId = (adminIdEl && adminIdEl.value) ? adminIdEl.value.trim().toUpperCase() : '';
-
-            // find matching hospital if any; otherwise fall back to the first hospital in the list
-            let hospital = hospitals.find(h => h.id === enteredId);
-            if (!hospital) {
-                // fallback: first hospital available
-                hospital = hospitals.length ? hospitals[0] : null;
-            }
-
-            // proceed to admin dashboard even if ID didn't match
-            currentUser = { role: 'admin', hospital: hospital };
-            currentHospital = hospital;
-            showMainApp();
+	
+	    const adminIdEl = document.getElementById('adminId');
+	    const enteredId = (adminIdEl && adminIdEl.value) ? adminIdEl.value.trim().toUpperCase() : '';
+	
+	    // find matching hospital if any; otherwise fall back to the first hospital in the list
+	    let hospital = hospitals.find(h => h.id === enteredId);
+	    if (!hospital) {
+	        hospital = hospitals.length ? hospitals[0] : null;
+	        console.debug('loginAsAdmin: no exact match for ID', enteredId, '– falling back to:', hospital && hospital.id);
+	    } else {
+	        console.debug('loginAsAdmin: matched hospital ID', enteredId);
+	    }
+	
+	    // proceed to admin dashboard even if ID didn't match (no alert)
+	    currentUser = { role: 'admin', hospital: hospital };
+	    currentHospital = hospital;
+	
+	    // ensure admin login form hidden and navigate
+	    try { hideAdminLogin(); } catch (e) { /* ignore */ }
+	    showMainApp();
         }
 
         function logout() {
